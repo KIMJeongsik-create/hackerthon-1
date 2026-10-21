@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  userId      String // Supabase auth.users.id
+  storeName   String
+  category    String?
+  description String?
+  highlights  String?
+  address     String?
+  phone       String?
+  format      String   @default("v")
+  accent      String   @default("#ff6b35")
+  script      Json?
+  photoPaths  String[]
+  videoPath   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
