@@ -19,16 +19,15 @@ export default function LoginForm({ next }: { next: string }) {
     const supabase = createClient();
     try {
       if (mode === "signup") {
-        const { data, error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        if (!data.session) {
-          setMsg("가입 확인 메일을 보냈습니다. 메일의 링크를 누른 뒤 로그인하세요.");
-          return;
-        }
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        const r = await fetch("/api/signup", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        if (!r.ok) throw new Error(((await r.json()) as { error?: string }).error ?? "가입하지 못했습니다.");
       }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
       router.push(next);
       router.refresh();
     } catch (err) {
